@@ -14,14 +14,9 @@ jobs:
 
     services:
       Xvfb:
-        image: xvfb/standalone:latest
+        image: dorowu/ubuntu-xfce-vnc:latest
         ports:
-          - 4444:4444 
-        options: >-
-          --health-cmd="curl --fail http://localhost:4444/status" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=3
+          - 5900:5900
 
     steps:
     - name: Checkout code
@@ -35,7 +30,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r project/requirements.txt
         playwright install
 
     - name: Check Python version
