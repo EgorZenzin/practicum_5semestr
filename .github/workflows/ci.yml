@@ -3,14 +3,25 @@ name: Run Tests
 on:
   push:
     branches:
-      - e2etesting  # Укажите вашу ветку
+      - e2etesting
   pull_request:
     branches:
-      - e2etesting  # Укажите вашу ветку
+      - e2etesting
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      Xvfb:
+        image: xvfb/standalone:latest
+        ports:
+          - 4444:4444 
+        options: >-
+          --health-cmd="curl --fail http://localhost:4444/status" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
 
     steps:
     - name: Checkout code
@@ -19,16 +30,21 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.12' 
+        python-version: '3.12'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        playwright install  # Установка браузеров Playwright
+        playwright install
+
+    - name: Check Python version
+      run: python --version
+
+    - name: List installed packages
+      run: pip list
 
     - name: Run tests
-      run: |
-        pytest 
+      run: pytest project/tests
       env:
-        DISPLAY: ":99"  # Устанавливаем переменную DISPLAY для Xvfb
+        DISPLAY: ":99"
