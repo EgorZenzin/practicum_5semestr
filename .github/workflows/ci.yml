@@ -12,12 +12,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      Xvfb:
-        image: dorowu/ubuntu-xfce-vnc:latest
-        ports:
-          - 5900:5900
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
