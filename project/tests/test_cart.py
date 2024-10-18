@@ -1,26 +1,18 @@
-import pytest
-from playwright.sync_api import sync_playwright
-from src.pages.login_page import LoginPage
 from src.pages.product_page import ProductPage
 from src.pages.cart_page import CartPage
 
-def test_add_product_to_cart():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        context = browser.new_context()
-        page = context.new_page()
+def test_cart(browser):
+    page = browser.new_page()
+    page.goto("https://www.saucedemo.com/")
+    page.fill("input#user-name", "standard_user")
+    page.fill("input#password", "secret_sauce")
+    page.click("input.btn_action")
+    
+    product_page = ProductPage(page)
+    product_page.add_to_cart()
 
-        login_page = LoginPage(page)
-        login_page.open()
-        login_page.login("standard_user", "secret_sauce")
+    cart_page = CartPage(page)
+    cart_page.navigate_to_cart()
 
-        product_page = ProductPage(page)
-        product_page.add_to_cart(1)
-
-        product_page.go_to_cart()
-        cart_page = CartPage(page)
-
-        assert cart_page.is_cart_not_empty(), "Корзина должна содержать хотя бы один товар."
-
-        context.close()
-        browser.close()
+    assert page.is_visible("div.cart_item")
+    page.close()
