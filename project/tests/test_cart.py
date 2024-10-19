@@ -1,12 +1,13 @@
 from src.pages.product_page import ProductPage
 from src.pages.cart_page import CartPage
+from src.pages.login_page import LoginPage
 
 def test_cart(browser):
     page = browser.new_page()
     page.goto("https://www.saucedemo.com/")
-    page.fill("input#user-name", "standard_user")
-    page.fill("input#password", "secret_sauce")
-    page.click("input.btn_action")
+    
+    login_page = LoginPage(page)
+    login_page.login("standard_user", "secret_sauce")
     
     product_page = ProductPage(page)
     product_page.add_to_cart()
@@ -14,5 +15,5 @@ def test_cart(browser):
     cart_page = CartPage(page)
     cart_page.navigate_to_cart()
 
-    assert page.is_visible("div.cart_item")
+    assert cart_page.is_cart_item_visible()
     page.close()

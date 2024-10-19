@@ -1,10 +1,13 @@
+from src.pages.login_page import LoginPage
+
 def test_display(browser):
     page = browser.new_page()
     page.goto("https://www.saucedemo.com/")
-    page.fill("input#user-name", "standard_user")
-    page.fill("input#password", "secret_sauce")
-    page.click("input.btn_action")
+    
+    login_page = LoginPage(page)
+    login_page.login("standard_user", "secret_sauce")
 
-    assert page.is_visible("span.title") 
-    assert page.inner_text("span.title") == "Products"  
+    assert login_page.is_title_visible()
+    assert login_page.get_title_text() == "Products"
+    
     page.close()
